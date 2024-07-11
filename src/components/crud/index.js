@@ -1,17 +1,20 @@
 import React from "react";
 import StartFirebase from "../firebaseConfig";
 import { ref, set, get, update, remove, child } from "firebase/database";
-import './index.css';
+import "./index.css";
 
 export class Crud extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       db: "",
-      username: "",
-      fullname: "",
-      phonenumber: "",
-      dob: "",
+      CertificateId: "",
+      ID: "",
+      StudentName: "",
+      ProjectName: "",
+      Domain: "",
+      TrainingFrom: "",
+      TrainingTo: "",
     };
     this.interface = this.interface.bind(this);
   }
@@ -19,52 +22,78 @@ export class Crud extends React.Component {
   componentDidMount() {
     this.setState({
       db: StartFirebase(),
-    }); 
-  } 
+    });
+  }
 
   render() {
     return (
       <>
-        <label>Enter Username</label>
+        <label>Enter CertificateId</label>
         <input
           type="text"
-          id="userbox"
-          value={this.state.username}
+          value={this.state.CertificateId}
           onChange={(e) => {
-            this.setState({ username: e.target.value });
+            this.setState({ CertificateId: e.target.value });
           }}
         />
         <br></br>
 
-        <label>Enter Fullname</label>
+        <label>Enter CertificateId</label>
         <input
           type="text"
-          id="namebox"
-          value={this.state.fullname}
+          value={this.state.ID}
           onChange={(e) => {
-            this.setState({ fullname: e.target.value });
+            this.setState({ ID: e.target.value });
           }}
         />
         <br></br>
 
-        <label>Enter Phone Number</label>
+        <label>Enter Student Name</label>
         <input
-          type="number"
-          id="phonebox"
-          value={this.state.phonenumber}
+          type="text"
+          value={this.state.StudentName}
           onChange={(e) => {
-            this.setState({ phonenumber: e.target.value });
+            this.setState({ StudentName: e.target.value });
           }}
         />
         <br></br>
 
-        <label>Enter Date of Birth</label>
+        <label>Enter Project Name</label>
+        <input
+          type="text"
+          value={this.state.ProjectName}
+          onChange={(e) => {
+            this.setState({ ProjectName: e.target.value });
+          }}
+        />
+        <br></br>
+
+        <label>Enter Domain</label>
+        <input
+          type="text"
+          value={this.state.Domain}
+          onChange={(e) => {
+            this.setState({ Domain: e.target.value });
+          }}
+        />
+        <br></br>
+
+        <label>Enter Training From</label>
         <input
           type="date"
-          id="datebox"
-          value={this.state.dob}
+          value={this.state.TrainingFrom}
           onChange={(e) => {
-            this.setState({ dob: e.target.value });
+            this.setState({ TrainingFrom: e.target.value });
+          }}
+        />
+        <br></br>
+
+        <label>Enter Training To</label>
+        <input
+          type="date"
+          value={this.state.TrainingTo}
+          onChange={(e) => {
+            this.setState({ TrainingTo: e.target.value });
           }}
         />
         <br></br>
@@ -101,10 +130,13 @@ export class Crud extends React.Component {
 
   getAllInputs() {
     return {
-      username: this.state.username,
-      name: this.state.fullname,
-      phone: Number(this.state.phonenumber),
-      dob: this.state.dob,
+      CertificateId: this.state.CertificateId,
+      ID: this.state.ID,
+      StudentName: this.state.StudentName,
+      ProjectName: this.state.ProjectName,
+      Domain: this.state.Domain,
+      TrainingFrom: this.state.TrainingFrom,
+      TrainingTo: this.state.TrainingTo,
     };
   }
 
@@ -112,10 +144,13 @@ export class Crud extends React.Component {
     const db = this.state.db;
     const data = this.getAllInputs();
 
-    set(ref(db, "Customer/" + data.username), {
-      Fullname: data.name,
-      Phonenumber: data.phone,
-      dateofbirth: data.dob,
+    set(ref(db, "Students/" + data.CertificateId), {
+      ID: data.ID,
+      StudentName: data.StudentName,
+      ProjectName: data.ProjectName,
+      Domain: data.Domain,
+      TrainingFrom: data.TrainingFrom,
+      TrainingTo: data.TrainingTo,
     })
       .then(() => {
         alert("data was added successfully");
@@ -129,10 +164,13 @@ export class Crud extends React.Component {
     const db = this.state.db;
     const data = this.getAllInputs();
 
-    update(ref(db, "Customer/" + data.username), {
-      Fullname: data.name,
-      Phonenumber: data.phone,
-      dateofbirth: data.dob,
+    update(ref(db, "Students/" + data.CertificateId), {
+      ID: data.ID,
+      StudentName: data.StudentName,
+      ProjectName: data.ProjectName,
+      Domain: data.Domain,
+      TrainingFrom: data.TrainingFrom,
+      TrainingTo: data.TrainingTo,
     })
       .then(() => {
         alert("data is updated successfully");
@@ -144,9 +182,9 @@ export class Crud extends React.Component {
 
   deleteData() {
     const db = this.state.db;
-    const username = this.getAllInputs().username;
+    const CertificateId = this.getAllInputs().CertificateId;
 
-    remove(ref(db, "Customer/" + username))
+    remove(ref(db, "Students/" + CertificateId))
       .then(() => {
         alert("data was added successfully");
       })
@@ -157,21 +195,25 @@ export class Crud extends React.Component {
 
   selectData() {
     const dbref = ref(this.state.db);
-    const username = this.getAllInputs().username;
+    const CertificateId = this.getAllInputs().CertificateId;
 
-    get(child(dbref, "Customer/" + username)).then((snapshot) => {
-      if (snapshot.exists()) {
-        this.setState({
-          fullname: snapshot.val().Fullname,
-          phonenumber: snapshot.val().Phonenumber,
-          dob: snapshot.val().dateofbirth,
-        })
-      }
-
-      else{
-        alert("no data found");
-      }
-    })
-    .catch((error) =>{alert ("there was an error, details: "+error)});
+    get(child(dbref, "Students/" + CertificateId))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          this.setState({
+            ID: snapshot.val().ID,
+            StudentName: snapshot.val().StudentName,
+            ProjectName: snapshot.val().ProjectName,
+            Domain: snapshot.val().Domain,
+            TrainingFrom: snapshot.val().TrainingFrom,
+            TrainingTo: snapshot.val().TrainingTo,
+          });
+        } else {
+          alert("no data found");
+        }
+      })
+      .catch((error) => {
+        alert("there was an error, details: " + error);
+      });
   }
 }
